@@ -1,6 +1,6 @@
-
 from django.contrib import admin
-from .models import Categoria, Producto, Cliente
+from .models import Categoria, Producto, Cliente, Compra, DetalleCompra
+
 
 @admin.register(Categoria)
 class CategoriaAdmin(admin.ModelAdmin):
@@ -25,3 +25,16 @@ class ClienteAdmin(admin.ModelAdmin):
     search_fields = ('nombre', 'email')
     ordering = ('nombre',)
     date_hierarchy = 'fecha_registro'
+
+
+class DetalleCompraInline(admin.TabularInline):
+    model = DetalleCompra
+    extra = 0
+
+
+@admin.register(Compra)
+class CompraAdmin(admin.ModelAdmin):
+    list_display = ('numero', 'fecha', 'cliente', 'estado', 'total')
+    list_filter = ('estado', 'fecha')
+    search_fields = ('numero', 'cliente__nombre')
+    inlines = [DetalleCompraInline]

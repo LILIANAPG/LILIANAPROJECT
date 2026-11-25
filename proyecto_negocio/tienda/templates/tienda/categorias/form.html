@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block crumbs %}
+<li><a href="{% url 'lista_categorias' %}">Categorías</a></li>
+<li aria-current="page">{{ titulo }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="card card-accent medium">
+    <h1>{{ titulo }}</h1>
+    <p class="required-note">Los campos con <span aria-hidden="true">*</span> son obligatorios.</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% include 'tienda/_campos.html' %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Guardar categoría</button>
+            <a href="{% url 'lista_categorias' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

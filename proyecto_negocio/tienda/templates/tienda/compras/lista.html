@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block title %}Compras{% endblock %}
+{% block crumbs %}<li aria-current="page">Compras</li>{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Compras y pedidos</h1>
+    <a href="{% url 'crear_compra' %}" class="btn btn-primary">+ Registrar compra</a>
+</div>
+
+<div class="card">
+    <form method="get" class="filters" role="search" aria-label="Buscar y filtrar compras">
+        <div class="field grow">
+            <label for="q">Buscar</label>
+            <input type="search" id="q" name="q" value="{{ q }}" class="form-control" placeholder="Número de pedido o nombre del cliente…" aria-label="Buscar por número de pedido o cliente">
+        </div>
+        <div class="field">
+            <label for="estado">Estado</label>
+            <select id="estado" name="estado" class="form-control" aria-label="Filtrar por estado">
+                <option value="">Todos</option>
+                {% for valor, etiqueta in estados %}
+                    <option value="{{ valor }}" {% if estado_sel == valor %}selected{% endif %}>{{ etiqueta }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if hay_filtros %}<a href="{% url 'lista_compras' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
+    </form>
+    <p class="result-count" aria-live="polite">{{ compras|length }} compra{{ compras|length|pluralize }} encontrada{{ compras|length|pluralize }} · Suma (sin canceladas): <strong>${{ total_listado }}</strong></p>
+</div>
+
+<div class="card">
+    {% if compras %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Pedido</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="num">Total</th><th>Acciones</th></tr>
+            </thead>
+            <tbody>
+                {% for compra in compras %}
+                <tr>
+                    <td><a href="{% url 'detalle_compra' compra.pk %}"><strong>{{ compra.numero }}</strong></a></td>
+                    <td>{{ compra.fecha|date:"d/m/Y H:i" }}</td>
+                    <td>{{ compra.nombre_cliente }}</td>
+                    <td><span class="badge badge-{{ compra.estado }}">{{ compra.get_estado_display }}</span></td>
+                    <td class="num">${{ compra.total }}</td>
+                    <td>
+                        <div class="row-actions">
+                            <a href="{% url 'detalle_compra' compra.pk %}" class="btn btn-secondary btn-sm" aria-label="Ver detalle del pedido {{ compra.numero }}">Ver</a>
+                            <a href="{% url 'editar_compra' compra.pk %}" class="btn btn-secondary btn-sm" aria-label="Editar pedido {{ compra.numero }}">Editar</a>
+                            <a href="{% url 'eliminar_compra' compra.pk %}" class="btn btn-danger btn-sm" aria-label="Eliminar pedido {{ compra.numero }}">Eliminar</a>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif hay_filtros %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">🔍</span>
+        <h3>Sin resultados</h3>
+        <p>No hay compras que coincidan con tu búsqueda. Revisa el número, el nombre o el estado.</p>
+        <div class="actions"><a href="{% url 'lista_compras' %}" class="btn btn-secondary">Limpiar búsqueda</a></div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">🧾</span>
+        <h3>Aún no hay compras registradas</h3>
+        <p>Registra tu primera venta para llevar el control de pedidos e inventario.</p>
+        <div class="actions"><a href="{% url 'crear_compra' %}" class="btn btn-primary">+ Registrar compra</a></div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,32 +1,63 @@
 {% extends 'base.html' %}
+{% block title %}Inicio{% endblock %}
 
-{% block title %}Inicio - Mi Negocio{% endblock %}
+{% block breadcrumbs %}
+<nav class="breadcrumbs" aria-label="Migas de pan"><ol><li aria-current="page">Inicio</li></ol></nav>
+{% endblock %}
 
 {% block content %}
-    <div class="card">
-        <h2>Bienvenido a Mi Negocio</h2>
-        <p>Software que crece con tu negocio.</p>
+<section class="hero">
+    <h1>Bienvenido a Papelería Punto y Coma</h1>
+    <p>Todo lo que necesitas para la escuela y la oficina, ordenado y a la mano. Consulta el catálogo o entra para registrar compras y controlar tu inventario.</p>
+    <div class="actions">
+        <a href="{% url 'lista_productos' %}" class="btn btn-primary">Ver catálogo</a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'crear_compra' %}" class="btn btn-secondary">Registrar compra</a>
+        {% else %}
+            <a href="{% url 'login' %}" class="btn btn-secondary">Iniciar sesión</a>
+        {% endif %}
     </div>
+</section>
 
-    <div class="card">
-        <h3>Categorías</h3>
-        <ul>
+<section class="card">
+    <h2>Categorías</h2>
+    {% if categorias %}
+        <div class="chips">
             {% for categoria in categorias %}
-                <li>{{ categoria.nombre }}</li>
-            {% empty %}
-                <li>No hay categorías registradas.</li>
+                <a class="chip" href="{% url 'lista_productos' %}?categoria={{ categoria.pk }}">{{ categoria.nombre }}</a>
             {% endfor %}
-        </ul>
-    </div>
+        </div>
+    {% else %}
+        <div class="empty-state"><span class="empty-icon" aria-hidden="true">🗂️</span><p>Aún no hay categorías registradas.</p></div>
+    {% endif %}
+</section>
 
-    <div class="card">
-        <h3>Productos Activos</h3>
-        <ul>
-            {% for producto in productos %}
-                <li>{{ producto.nombre }} - ${{ producto.precio }} (Stock: {{ producto.stock }})</li>
-            {% empty %}
-                <li>No hay productos activos.</li>
-            {% endfor %}
-        </ul>
+<section>
+    <div class="page-header">
+        <h2>Productos disponibles</h2>
+        <a href="{% url 'lista_productos' %}" class="btn btn-secondary btn-sm">Ver todos</a>
     </div>
+    {% if productos %}
+        <div class="product-grid">
+            {% for producto in productos|slice:":8" %}
+            <article class="product-card">
+                <span class="badge badge-neutral" style="align-self:flex-start;">{{ producto.categoria.nombre }}</span>
+                <h3>{{ producto.nombre }}</h3>
+                {% if producto.stock > 0 %}
+                    <span class="small muted">{{ producto.stock }} en existencia</span>
+                {% else %}
+                    <span class="badge badge-out" style="align-self:flex-start;">Agotado</span>
+                {% endif %}
+                <p class="price">${{ producto.precio }}</p>
+            </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card empty-state">
+            <span class="empty-icon" aria-hidden="true">📦</span>
+            <h3>Todavía no hay productos activos</h3>
+            <p>Cuando se registren productos aparecerán aquí.</p>
+        </div>
+    {% endif %}
+</section>
 {% endblock %}

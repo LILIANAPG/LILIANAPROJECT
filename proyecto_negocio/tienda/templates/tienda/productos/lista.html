@@ -1,31 +1,88 @@
 {% extends 'base.html' %}
 {% block title %}Productos{% endblock %}
+{% block crumbs %}<li aria-current="page">Productos</li>{% endblock %}
+
 {% block content %}
+<div class="page-header">
+    <h1>Productos</h1>
+    {% if user.is_authenticated %}<a href="{% url 'crear_producto' %}" class="btn btn-primary">+ Nuevo producto</a>{% endif %}
+</div>
+
 <div class="card">
-    <h2>Lista de Productos</h2>
-    <a href="{% url 'crear_producto' %}" class="btn btn-success">+ Nuevo Producto</a>
-    <table>
-        <thead>
-            <tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock</th><th>Categoría</th><th>Activo</th><th>Acciones</th></tr>
-        </thead>
-        <tbody>
-            {% for producto in productos %}
-            <tr>
-                <td>{{ producto.id }}</td>
-                <td>{{ producto.nombre }}</td>
-                <td>${{ producto.precio }}</td>
-                <td>{{ producto.stock }}</td>
-                <td>{{ producto.categoria.nombre }}</td>
-                <td>{% if producto.activo %}✅{% else %}❌{% endif %}</td>
-                <td>
-                    <a href="{% url 'editar_producto' producto.pk %}" class="btn btn-warning">Editar</a>
-                    <a href="{% url 'eliminar_producto' producto.pk %}" class="btn btn-danger">Eliminar</a>
-                </td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="7">No hay productos registrados.</td></tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <form method="get" class="filters" role="search" aria-label="Buscar y filtrar productos">
+        <div class="field grow">
+            <label for="q">Buscar</label>
+            <input type="search" id="q" name="q" value="{{ q }}" class="form-control" placeholder="Nombre o descripción…" aria-label="Buscar producto por nombre o descripción">
+        </div>
+        <div class="field">
+            <label for="categoria">Categoría</label>
+            <select id="categoria" name="categoria" class="form-control" aria-label="Filtrar por categoría">
+                <option value="">Todas</option>
+                {% for c in categorias %}
+                    <option value="{{ c.pk }}" {% if categoria_sel == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="field">
+            <label for="stock">Existencias</label>
+            <select id="stock" name="stock" class="form-control" aria-label="Filtrar por existencias">
+                <option value="">Todas</option>
+                <option value="con" {% if stock_sel == 'con' %}selected{% endif %}>Con stock</option>
+                <option value="sin" {% if stock_sel == 'sin' %}selected{% endif %}>Sin stock</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+        {% if hay_filtros %}<a href="{% url 'lista_productos' %}" class="btn btn-secondary">Limpiar</a>{% endif %}
+    </form>
+    <p class="result-count" aria-live="polite">{{ productos|length }} producto{{ productos|length|pluralize }} encontrado{{ productos|length|pluralize }}.</p>
+</div>
+
+<div class="card">
+    {% if productos %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Producto</th><th>Categoría</th><th class="num">Precio</th><th class="num">Stock</th><th>Estado</th>{% if user.is_authenticated %}<th>Acciones</th>{% endif %}</tr>
+            </thead>
+            <tbody>
+                {% for producto in productos %}
+                <tr>
+                    <td><strong>{{ producto.nombre }}</strong></td>
+                    <td>{{ producto.categoria.nombre }}</td>
+                    <td class="num">${{ producto.precio }}</td>
+                    <td class="num">
+                        {% if producto.stock <= 0 %}<span class="badge badge-out">Sin stock</span>
+                        {% elif producto.stock <= 5 %}<span class="badge badge-low">{{ producto.stock }} · bajo</span>
+                        {% else %}{{ producto.stock }}{% endif %}
+                    </td>
+                    <td>{% if producto.activo %}<span class="badge badge-ok">Activo</span>{% else %}<span class="badge badge-neutral">Inactivo</span>{% endif %}</td>
+                    {% if user.is_authenticated %}
+                    <td>
+                        <div class="row-actions">
+                            <a href="{% url 'editar_producto' producto.pk %}" class="btn btn-secondary btn-sm" aria-label="Editar {{ producto.nombre }}">Editar</a>
+                            <a href="{% url 'eliminar_producto' producto.pk %}" class="btn btn-danger btn-sm" aria-label="Eliminar {{ producto.nombre }}">Eliminar</a>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% elif hay_filtros %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">🔍</span>
+        <h3>Sin resultados</h3>
+        <p>No encontramos productos con esos criterios. Prueba con otra palabra o quita los filtros.</p>
+        <div class="actions"><a href="{% url 'lista_productos' %}" class="btn btn-secondary">Limpiar búsqueda</a></div>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <span class="empty-icon" aria-hidden="true">📦</span>
+        <h3>Aún no hay productos</h3>
+        <p>Registra tu primer producto para empezar el catálogo.</p>
+        {% if user.is_authenticated %}<div class="actions"><a href="{% url 'crear_producto' %}" class="btn btn-primary">+ Nuevo producto</a></div>{% endif %}
+    </div>
+    {% endif %}
 </div>
 {% endblock %}

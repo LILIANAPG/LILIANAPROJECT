@@ -1,15 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}Iniciar Sesión{% endblock %}
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block crumbs %}<li aria-current="page">Iniciar sesión</li>{% endblock %}
+
 {% block content %}
-<div class="card" style="max-width: 400px; margin: 0 auto;">
-    <h2>Iniciar Sesión</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Entrar</button>
-    </form>
+<div class="card card-accent narrow">
+    <h1>Iniciar sesión</h1>
+    <p class="muted">Entra para administrar productos, clientes y compras de la papelería.</p>
+
     {% if form.errors %}
-        <p style="color: #dc2626; margin-top: 10px;">Usuario o contraseña incorrectos.</p>
+        <div class="alert alert-error" role="alert">Usuario o contraseña incorrectos. Revisa tus datos e inténtalo de nuevo.</div>
     {% endif %}
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                <input type="{{ field.field.widget.input_type }}" name="{{ field.html_name }}" id="{{ field.id_for_label }}"
+                       class="form-control{% if form.errors %} is-invalid{% endif %}" required
+                       autocomplete="{% if field.name == 'password' %}current-password{% else %}username{% endif %}"
+                       {% if field.name == 'username' %}autofocus value="{{ field.value|default_if_none:'' }}"{% endif %}>
+            </div>
+        {% endfor %}
+        {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Entrar</button>
+            <a href="{% url 'inicio' %}" class="btn btn-secondary">Volver al inicio</a>
+        </div>
+    </form>
 </div>
 {% endblock %}

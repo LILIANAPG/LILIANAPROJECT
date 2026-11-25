@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Pedido {{ compra.numero }}{% endblock %}
+{% block crumbs %}
+<li><a href="{% url 'lista_compras' %}">Compras</a></li>
+<li aria-current="page">{{ compra.numero }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Pedido {{ compra.numero }} <span class="badge badge-{{ compra.estado }}">{{ compra.get_estado_display }}</span></h1>
+    <div class="actions">
+        <a href="{% url 'editar_compra' compra.pk %}" class="btn btn-secondary">Editar</a>
+        <a href="{% url 'eliminar_compra' compra.pk %}" class="btn btn-danger">Eliminar</a>
+    </div>
+</div>
+
+<div class="card card-accent">
+    <dl class="detail-list">
+        <dt>Fecha</dt><dd>{{ compra.fecha|date:"d/m/Y H:i" }}</dd>
+        <dt>Cliente</dt><dd>{{ compra.nombre_cliente }}</dd>
+        <dt>Estado</dt><dd>{{ compra.get_estado_display }}</dd>
+        <dt>Notas</dt><dd>{{ compra.notas|default:"—" }}</dd>
+    </dl>
+</div>
+
+<div class="card">
+    <h2>Artículos</h2>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Producto</th><th class="num">Cantidad</th><th class="num">Precio unitario</th><th class="num">Subtotal</th></tr></thead>
+            <tbody>
+                {% for d in detalles %}
+                <tr>
+                    <td>{{ d.producto.nombre }}</td>
+                    <td class="num">{{ d.cantidad }}</td>
+                    <td class="num">${{ d.precio_unitario }}</td>
+                    <td class="num">${{ d.subtotal }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4" class="muted">Este pedido no tiene artículos.</td></tr>
+                {% endfor %}
+            </tbody>
+            <tfoot><tr class="total-row"><td colspan="3" class="num">Total</td><td class="num">${{ compra.total }}</td></tr></tfoot>
+        </table>
+    </div>
+    {% if compra.estado == 'cancelado' %}
+        <div class="alert alert-info" style="margin-top:1rem;">Pedido cancelado: sus artículos ya se devolvieron al inventario.</div>
+    {% endif %}
+</div>
+
+<a href="{% url 'lista_compras' %}" class="btn btn-secondary">← Volver a compras</a>
+{% endblock %}

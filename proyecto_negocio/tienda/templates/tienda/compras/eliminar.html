@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar pedido {{ compra.numero }}{% endblock %}
+{% block crumbs %}
+<li><a href="{% url 'lista_compras' %}">Compras</a></li>
+<li><a href="{% url 'detalle_compra' compra.pk %}">{{ compra.numero }}</a></li>
+<li aria-current="page">Eliminar</li>
+{% endblock %}
+
+{% block content %}
+<div class="card card-accent medium">
+    <h1>¿Eliminar pedido {{ compra.numero }}?</h1>
+    <p>Cliente: <strong>{{ compra.nombre_cliente }}</strong> · Total: <strong>${{ compra.total }}</strong> · Estado: {{ compra.get_estado_display }}.</p>
+    <div class="alert alert-warning" role="alert">Se eliminará el pedido y sus artículos. Si estaba reservando inventario, las piezas regresarán al stock. Esta acción no se puede deshacer.</div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url 'detalle_compra' compra.pk %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

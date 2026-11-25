@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar categoría{% endblock %}
+{% block crumbs %}
+<li><a href="{% url 'lista_categorias' %}">Categorías</a></li>
+<li aria-current="page">Eliminar</li>
+{% endblock %}
+
+{% block content %}
+<div class="card card-accent medium">
+    <h1>¿Eliminar categoría?</h1>
+    <p>Vas a eliminar la categoría <strong>{{ categoria.nombre }}</strong>.</p>
+    <div class="alert alert-warning" role="alert">Atención: también se eliminarán todos los productos de esta categoría. Esta acción no se puede deshacer.</div>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+            <a href="{% url 'lista_categorias' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}
