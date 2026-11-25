@@ -5,28 +5,54 @@
 {% block content %}
 <div class="page-header">
     <div>
-        <h1>Panel de control</h1>
-        <p class="muted" style="margin:0;">Resumen de la papelería · {{ mes_actual|date:"F Y" }}</p>
+        <h1> Panel de control</h1>
+        <p class="muted" style="margin:0;">Resumen operativo de <strong>Papelería Nomita</strong> · {{ mes_actual|date:"F Y" }}</p>
     </div>
     <div class="actions">
-        <a href="{% url 'crear_compra' %}" class="btn btn-primary">+ Registrar compra</a>
-        <a href="{% url 'crear_producto' %}" class="btn btn-secondary">+ Nuevo producto</a>
+        <a href="{% url 'crear_compra' %}" class="btn btn-primary">🛒 Registrar compra</a>
+        <a href="{% url 'crear_producto' %}" class="btn btn-secondary">➕ Nuevo producto</a>
     </div>
 </div>
 
 <section class="stats-grid" aria-label="Métricas principales">
-    <div class="stat"><p class="label">Productos</p><p class="value">{{ total_productos }}</p><span class="small muted">{{ productos_activos }} activos</span></div>
-    <div class="stat"><p class="label">Categorías</p><p class="value">{{ total_categorias }}</p></div>
-    <div class="stat"><p class="label">Clientes</p><p class="value">{{ total_clientes }}</p></div>
-    <div class="stat {% if productos_sin_stock %}alert-stat{% endif %}"><p class="label">Productos sin stock</p><p class="value">{{ productos_sin_stock }}</p></div>
-    <div class="stat"><p class="label">Valor del inventario</p><p class="value">${{ valor_inventario|floatformat:2 }}</p></div>
-    <div class="stat"><p class="label">Compras del mes</p><p class="value">{{ compras_mes }}</p><span class="small muted">{{ compras_pendientes }} pendiente{{ compras_pendientes|pluralize }} en total</span></div>
-    <div class="stat"><p class="label">Ventas cobradas del mes</p><p class="value">${{ ventas_mes|floatformat:2 }}</p></div>
+    <div class="stat">
+        <p class="label">📦 Productos</p>
+        <p class="value">{{ total_productos }}</p>
+        <span class="small muted">✅ {{ productos_activos }} activos</span>
+    </div>
+    <div class="stat">
+        <p class="label">🗂️ Categorías</p>
+        <p class="value">{{ total_categorias }}</p>
+    </div>
+    <div class="stat">
+        <p class="label">👥 Clientes</p>
+        <p class="value">{{ total_clientes }}</p>
+    </div>
+    <div class="stat {% if productos_sin_stock %}alert-stat{% endif %}">
+        <p class="label">⚠️ Sin stock</p>
+        <p class="value">{{ productos_sin_stock }}</p>
+    </div>
+    <div class="stat">
+        <p class="label">💎 Valor de inventario</p>
+        <p class="value">${{ valor_inventario|floatformat:2 }}</p>
+    </div>
+    <div class="stat">
+        <p class="label">🛍️ Compras del mes</p>
+        <p class="value">{{ compras_mes }}</p>
+        <span class="small muted">⏳ {{ compras_pendientes }} pendiente{{ compras_pendientes|pluralize }} en total</span>
+    </div>
+    <div class="stat">
+        <p class="label">💰 Ventas cobradas del mes</p>
+        <p class="value">${{ ventas_mes|floatformat:2 }}</p>
+    </div>
 </section>
 
 <div class="two-col">
     <section class="card">
-        <div class="page-header"><h2>Últimas compras</h2><a href="{% url 'lista_compras' %}" class="btn btn-secondary btn-sm">Ver todas</a></div>
+        <div class="page-header">
+            <h2>🧾 Últimas compras</h2>
+            <a href="{% url 'lista_compras' %}" class="btn btn-secondary btn-sm">Ver todas →</a>
+        </div>
         {% if ultimas_compras %}
         <div class="table-wrap"><table>
             <thead><tr><th>Pedido</th><th>Cliente</th><th>Estado</th><th class="num">Total</th></tr></thead>
@@ -42,36 +68,45 @@
             </tbody>
         </table></div>
         {% else %}
-        <div class="empty-state"><span class="empty-icon" aria-hidden="true">🧾</span><p>Aún no hay compras registradas.</p></div>
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">🧾</span>
+            <p>Aún no hay compras registradas.</p>
+        </div>
         {% endif %}
     </section>
 
     <section class="card">
-        <div class="page-header"><h2>Stock bajo</h2><a href="{% url 'lista_productos' %}?stock=sin" class="btn btn-secondary btn-sm">Ver sin stock</a></div>
+        <div class="page-header">
+            <h2>📉 Alertas de inventario</h2>
+            <a href="{% url 'lista_productos' %}?stock=sin" class="btn btn-secondary btn-sm">Ver agotados →</a>
+        </div>
         {% if stock_bajo %}
         <div class="table-wrap"><table>
-            <thead><tr><th>Producto</th><th class="num">Stock</th></tr></thead>
+            <thead><tr><th>Producto</th><th class="num">Existencia</th></tr></thead>
             <tbody>
             {% for p in stock_bajo %}
                 <tr>
                     <td>{{ p.nombre }}</td>
-                    <td class="num">{% if p.stock <= 0 %}<span class="badge badge-out">Sin stock</span>{% else %}<span class="badge badge-low">{{ p.stock }}</span>{% endif %}</td>
+                    <td class="num">{% if p.stock <= 0 %}<span class="badge badge-out">Agotado</span>{% else %}<span class="badge badge-low">{{ p.stock }} u.</span>{% endif %}</td>
                 </tr>
             {% endfor %}
             </tbody>
         </table></div>
         {% else %}
-        <div class="empty-state"><span class="empty-icon" aria-hidden="true">✅</span><p>Todos los productos activos tienen buen inventario.</p></div>
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">✅</span>
+            <p>Todo el catálogo activo cuenta con buen inventario.</p>
+        </div>
         {% endif %}
     </section>
 </div>
 
 <div class="two-col">
     <section class="card">
-        <h2>Productos por categoría</h2>
+        <h2>🏷️ Productos por categoría</h2>
         {% if por_categoria %}
         <div class="table-wrap"><table>
-            <thead><tr><th>Categoría</th><th class="num">Productos</th></tr></thead>
+            <thead><tr><th>Categoría</th><th class="num">Artículos</th></tr></thead>
             <tbody>
             {% for cat in por_categoria %}
                 <tr><td>{{ cat.nombre }}</td><td class="num">{{ cat.num_productos }}</td></tr>
@@ -79,21 +114,25 @@
             </tbody>
         </table></div>
         {% else %}
-        <div class="empty-state"><p>No hay categorías registradas.</p></div>
+        <div class="empty-state"><p>No hay categorías registradas todavía.</p></div>
         {% endif %}
     </section>
 
     <section class="card">
-        <h2>Accesos rápidos</h2>
+        <h2>⚡ Accesos rápidos</h2>
         <div class="actions" style="flex-direction:column; align-items:stretch;">
-            <a href="{% url 'crear_compra' %}" class="btn btn-primary">+ Registrar compra rápida</a>
-            <a href="{% url 'crear_producto' %}" class="btn btn-secondary">+ Nuevo producto</a>
-            <a href="{% url 'crear_categoria' %}" class="btn btn-secondary">+ Nueva categoría</a>
-            <a href="{% url 'crear_cliente' %}" class="btn btn-secondary">+ Nuevo cliente</a>
+            <a href="{% url 'crear_compra' %}" class="btn btn-primary">🛒 Registrar compra rápida</a>
+            <a href="{% url 'crear_producto' %}" class="btn btn-secondary">📦 Nuevo producto</a>
+            <a href="{% url 'crear_categoria' %}" class="btn btn-secondary">🗂️ Nueva categoría</a>
+            <a href="{% url 'crear_cliente' %}" class="btn btn-secondary">👤 Nuevo cliente</a>
         </div>
-        <h3 style="margin-top:1.25rem;">Últimos productos agregados</h3>
+        <h3 style="margin-top:1.25rem;">🆕 Últimos productos agregados</h3>
         <ul class="muted" style="margin:0; padding-left:1.1rem;">
-            {% for p in ultimos_productos %}<li>{{ p.nombre }} — ${{ p.precio }}</li>{% empty %}<li>Sin productos todavía.</li>{% endfor %}
+            {% for p in ultimos_productos %}
+                <li><strong>{{ p.nombre }}</strong> — ${{ p.precio }}</li>
+            {% empty %}
+                <li>Sin productos registrados todavía.</li>
+            {% endfor %}
         </ul>
     </section>
 </div>

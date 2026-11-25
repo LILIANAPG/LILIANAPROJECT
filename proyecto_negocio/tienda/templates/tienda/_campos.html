@@ -1,7 +1,8 @@
 {# Parcial reutilizable: pinta cada campo con label, help_text y errores por campo (accesible) #}
 {% if form.non_field_errors %}
-    <div class="alert alert-error" role="alert">{{ form.non_field_errors }}</div>
+    <div class="alert alert-error" role="alert">⚠️ {{ form.non_field_errors }}</div>
 {% endif %}
+
 {% for field in form %}
     {% if field.is_hidden %}
         {{ field }}
@@ -11,15 +12,19 @@
                 {{ field }}
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
             {% else %}
-                <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span aria-hidden="true">*</span>{% endif %}</label>
+                <label for="{{ field.id_for_label }}">
+                    {{ field.label }}{% if field.field.required %} <span class="required-mark" aria-hidden="true" title="Campo obligatorio">*</span>{% endif %}
+                </label>
                 {{ field }}
             {% endif %}
+
             {% if field.help_text %}
-                <small class="help-text" id="{{ field.id_for_label }}_helptext">{{ field.help_text }}</small>
+                <small class="help-text" id="{{ field.id_for_label }}_helptext">ℹ️ {{ field.help_text }}</small>
             {% endif %}
+
             {% if field.errors %}
                 <ul class="field-errors" role="alert">
-                    {% for error in field.errors %}<li>{{ error }}</li>{% endfor %}
+                    {% for error in field.errors %}<li>❌ {{ error }}</li>{% endfor %}
                 </ul>
             {% endif %}
         </div>

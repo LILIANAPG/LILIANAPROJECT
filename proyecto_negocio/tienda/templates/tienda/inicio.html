@@ -10,11 +10,11 @@
     <h1>✨ Bienvenido a Papelería Nomita</h1>
     <p>Todo lo que necesitas para tus clases, proyectos y oficina, organizado en un solo lugar. Explora nuestro catálogo o inicia sesión para gestionar ventas e inventario.</p>
     <div class="actions">
-        <a href="{% url 'lista_productos' %}" class="btn btn-primary">🛍️ Explorar catálogo</a>
+        <a href="{% url 'lista_productos' %}" class="btn btn-primary"> Explorar catálogo</a>
         {% if user.is_authenticated %}
             <a href="{% url 'crear_compra' %}" class="btn btn-secondary">➕ Nueva compra</a>
         {% else %}
-            <a href="{% url 'login' %}" class="btn btn-secondary">🔐 Acceder al sistema</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary"> Acceder al sistema</a>
         {% endif %}
     </div>
 </section>
