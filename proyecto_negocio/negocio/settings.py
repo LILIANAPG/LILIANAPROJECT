@@ -24,7 +24,8 @@ import os
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'C_C9Gv_pyu6FE79D2KGIbYdT0V5a7LP1UInLxYgjo-4O4LSHaUz-sEfXWNMEA8N5GtE')
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = True
+
 
 ALLOWED_HOSTS = ['lilianaproject.onrender.com', 'localhost', '127.0.0.1']
 
