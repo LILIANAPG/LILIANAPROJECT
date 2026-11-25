@@ -7,35 +7,38 @@
 
 {% block content %}
 <section class="hero">
-    <h1>Bienvenido a Papelería Punto y Coma</h1>
-    <p>Todo lo que necesitas para la escuela y la oficina, ordenado y a la mano. Consulta el catálogo o entra para registrar compras y controlar tu inventario.</p>
+    <h1>✨ Bienvenido a Papelería Nomita</h1>
+    <p>Todo lo que necesitas para tus clases, proyectos y oficina, organizado en un solo lugar. Explora nuestro catálogo o inicia sesión para gestionar ventas e inventario.</p>
     <div class="actions">
-        <a href="{% url 'lista_productos' %}" class="btn btn-primary">Ver catálogo</a>
+        <a href="{% url 'lista_productos' %}" class="btn btn-primary">🛍️ Explorar catálogo</a>
         {% if user.is_authenticated %}
-            <a href="{% url 'crear_compra' %}" class="btn btn-secondary">Registrar compra</a>
+            <a href="{% url 'crear_compra' %}" class="btn btn-secondary">➕ Nueva compra</a>
         {% else %}
-            <a href="{% url 'login' %}" class="btn btn-secondary">Iniciar sesión</a>
+            <a href="{% url 'login' %}" class="btn btn-secondary">🔐 Acceder al sistema</a>
         {% endif %}
     </div>
 </section>
 
 <section class="card">
-    <h2>Categorías</h2>
+    <h2>🗂️ Explora por categoría</h2>
     {% if categorias %}
         <div class="chips">
             {% for categoria in categorias %}
-                <a class="chip" href="{% url 'lista_productos' %}?categoria={{ categoria.pk }}">{{ categoria.nombre }}</a>
+                <a class="chip" href="{% url 'lista_productos' %}?categoria={{ categoria.pk }}">🏷️ {{ categoria.nombre }}</a>
             {% endfor %}
         </div>
     {% else %}
-        <div class="empty-state"><span class="empty-icon" aria-hidden="true">🗂️</span><p>Aún no hay categorías registradas.</p></div>
+        <div class="empty-state">
+            <span class="empty-icon" aria-hidden="true">📂</span>
+            <p>Todavía no hay categorías creadas.</p>
+        </div>
     {% endif %}
 </section>
 
 <section>
     <div class="page-header">
-        <h2>Productos disponibles</h2>
-        <a href="{% url 'lista_productos' %}" class="btn btn-secondary btn-sm">Ver todos</a>
+        <h2>⭐ Productos destacados</h2>
+        <a href="{% url 'lista_productos' %}" class="btn btn-secondary btn-sm">Ver catálogo completo →</a>
     </div>
     {% if productos %}
         <div class="product-grid">
@@ -44,9 +47,9 @@
                 <span class="badge badge-neutral" style="align-self:flex-start;">{{ producto.categoria.nombre }}</span>
                 <h3>{{ producto.nombre }}</h3>
                 {% if producto.stock > 0 %}
-                    <span class="small muted">{{ producto.stock }} en existencia</span>
+                    <span class="small muted">✅ {{ producto.stock }} disponibles</span>
                 {% else %}
-                    <span class="badge badge-out" style="align-self:flex-start;">Agotado</span>
+                    <span class="badge badge-out" style="align-self:flex-start;">❌ Sin stock</span>
                 {% endif %}
                 <p class="price">${{ producto.precio }}</p>
             </article>
@@ -55,8 +58,8 @@
     {% else %}
         <div class="card empty-state">
             <span class="empty-icon" aria-hidden="true">📦</span>
-            <h3>Todavía no hay productos activos</h3>
-            <p>Cuando se registren productos aparecerán aquí.</p>
+            <h3>Aún no hay productos en exhibición</h3>
+            <p>En cuanto agregues artículos al inventario aparecerán en esta sección.</p>
         </div>
     {% endif %}
 </section>
