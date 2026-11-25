@@ -3,35 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Inicio{% endblock %} · Papelería Punto y Coma</title>
+    <title>{% block title %}Inicio{% endblock %} · Papelería Nomita</title>
+    <link rel="preconnect" href="https://googleapis.com">
+    <link rel="preconnect" href="https://gstatic.com" crossorigin>
+    <link href="https://googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
-    <a href="#contenido" class="skip-link">Saltar al contenido</a>
+    <a href="#contenido" class="skip-link">Saltar al contenido principal</a>
 
     <header class="site-header">
         <div class="header-inner">
-            <a href="{% url 'inicio' %}" class="brand" aria-label="Papelería Punto y Coma, ir al inicio">✏️ Papelería <span>Punto y Coma</span></a>
+            <a href="{% url 'inicio' %}" class="brand" aria-label="Papelería Nomita, ir al inicio">
+                📓 Papelería <span>Nomita</span>
+            </a>
 
             <nav class="main-nav" aria-label="Navegación principal">
-                <a href="{% url 'inicio' %}" {% if request.path == '/' %}class="active" aria-current="page"{% endif %}>Inicio</a>
-                <a href="{% url 'lista_productos' %}" {% if '/productos/' in request.path %}class="active" aria-current="page"{% endif %}>Productos</a>
-                <a href="{% url 'lista_categorias' %}" {% if '/categorias/' in request.path %}class="active" aria-current="page"{% endif %}>Categorías</a>
-                <a href="{% url 'lista_clientes' %}" {% if '/clientes/' in request.path %}class="active" aria-current="page"{% endif %}>Clientes</a>
-                <a href="{% url 'lista_compras' %}" {% if '/compras/' in request.path %}class="active" aria-current="page"{% endif %}>Compras</a>
-                <a href="{% url 'dashboard' %}" {% if '/dashboard/' in request.path %}class="active" aria-current="page"{% endif %}>Dashboard</a>
+                <a href="{% url 'inicio' %}" {% if request.path == '/' %}class="active" aria-current="page"{% endif %}>🏠 Inicio</a>
+                <a href="{% url 'lista_productos' %}" {% if '/productos/' in request.path %}class="active" aria-current="page"{% endif %}>📦 Productos</a>
+                <a href="{% url 'lista_categorias' %}" {% if '/categorias/' in request.path %}class="active" aria-current="page"{% endif %}>🗂️ Categorías</a>
+                <a href="{% url 'lista_clientes' %}" {% if '/clientes/' in request.path %}class="active" aria-current="page"{% endif %}>👥 Clientes</a>
+                <a href="{% url 'lista_compras' %}" {% if '/compras/' in request.path %}class="active" aria-current="page"{% endif %}>🛒 Compras</a>
+                <a href="{% url 'dashboard' %}" {% if '/dashboard/' in request.path %}class="active" aria-current="page"{% endif %}>📊 Dashboard</a>
             </nav>
 
             <div class="user-box">
                 {% if user.is_authenticated %}
-                    <span>Hola, <strong>{{ user.username }}</strong></span>
+                    <span> Hola, <strong>{{ user.username }}</strong></span>
                     <form action="{% url 'logout' %}" method="post">
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-header" aria-label="Cerrar sesión">Cerrar sesión</button>
+                        <button type="submit" class="btn btn-header" aria-label="Cerrar sesión">Salir</button>
                     </form>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn btn-header">Iniciar sesión</a>
+                    <a href="{% url 'login' %}" class="btn btn-header"> Iniciar sesión</a>
                 {% endif %}
             </div>
         </div>
@@ -59,7 +64,7 @@
     </main>
 
     <footer class="site-footer">
-        Papelería Punto y Coma · Software que crece con tu negocio &copy; {% now "Y" %}
+        <strong>Papelería Nomita</strong> · Todo para tus ideas, estudio y oficina &copy; {% now "Y" %}
     </footer>
     {% block extra_js %}{% endblock %}
 </body>
